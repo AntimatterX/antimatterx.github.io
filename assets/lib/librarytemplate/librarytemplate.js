@@ -1,67 +1,69 @@
 /*!
- * LibraryTemplate JavaScript Library v2.0.1
+ * LibraryTemplate JavaScript Library v2.1.0
  * https://github.com/AntimatterX/antimatterx.github.io/blob/main/assets/lib/librarytemplate/librarytemplate.js
+ * 
+ * Copyright (c) 2021 AntimatterX
+ * 
+ * Released under the MIT license.
+ * see https://opensource.org/licenses/MIT
  * 
  * This library is declared globally in non-Node.js environments with the following name.
  * librarytemplate
  * 
- * Released under the MIT license
- * 
- * Last Update
- * 2021-02-26T17:31:28.970Z
+ * Last Update: 2021-02-27T08:21:03.720Z
  */
 (function _main(_root, undefined) {
     'use strict';
     // 環境
     var _ctx = {
         libKeys: [],
-        conflict: {},
-        available: {
-            moduleExports: (typeof module === 'object' && module.exports !== undefined)
-        },
+        conflicts: {},
         fn: {
             /**
-             * グローバルのライブラリを前の状態に戻す
-             * @returns {Object<symbol|string|number, ?*>} 衝突していたプロパティのリスト
+             * グローバルのライブラリのプロパティを読み込み前に戻します。
+             * @returns {Object<string, ?*>} 読み込み前のプロパティのリストをオブジェクトで返します。
              */
             noConflict: function () {
                 _ctx.libKeys.forEach(function (k) {
-                    if (k in _ctx.conflict) _root[k] = _ctx.conflict[k];
+                    if (k in _ctx.conflicts) _root[k] = _ctx.conflicts[k];
                 });
                 return _ctx.conflict;
             },
             /**
-             * 型名を返す
-             * @param {?*} x 任意の値
-             * @returns {string} 型名
+             * 型名を返します。
+             * @param {*?} [x=undefined] 型名を取得する値を渡します。
+             * @returns {string} 第一引数に渡した値の型名の文字列を返します。
              */
             getType: function (x) {
-                return Object.prototype.toString.call(x).replace(/^\[object (.+)\]$/, "$1");
+                return Object.prototype.toString.call(x).slice(8, -1);
             },
             /**
-             * 指定された型かどうか判定する
-             * @param {?*} x 任意の値
-             * @param {string|Array<string>} type 型名または型名のリスト
-             * @returns {boolean} 指定された型かどうかの真偽値
+             * 指定した型名か判定します。
+             * @param {*?} x 判定する値を渡します。
+             * @param {string|Array<string>} type 型名の文字列または型名の配列を渡します。
+             * @returns {boolean} 第一引数に渡した値の型名が第二引数に渡された型名か判定して真偽値で返します。
              */
             isType: function (x, type) {
-                var xType = _ctx.fn.getType(x),
-                    appointedType = _ctx.fn.getType(type);
-                return appointedType === 'String' ? xType === type :
-                    appointedType === 'Array' ? type.indexOf(xType) > -1 :
-                        false;
+                var xType = _ctx.fn.getType(x);
+                switch (_ctx.fn.getType(type)) {
+                    case 'String':
+                        return xType === type;
+                    case 'Array':
+                        return type.indexOf(xType) > 0;
+                    default:
+                        return false;
+                }
             },
             /**
-             * デフォルト値と型が異なる場合はデフォルト値を返す
-             * @param {?*} x 任意の値
-             * @param {?*} defaultValue デフォルト値
-             * @param {string|Array<string>} [allowType=[]] 他に許容する型名または型名のリスト
-             * @returns {?*} キャストされた値
+             * デフォルト値の型にキャストする。
+             * @param {*?} x キャストする値を渡します。
+             * @param {*?} defaultValue デフォルトの値を渡します。
+             * @param {string|Array<string>} [allowType=[]] デフォルト値の型以外にも許容する型の型名の文字列または型名の配列を渡します。
+             * @returns {?*} デフォルト値の型にキャストされた値を返します。
              */
-            castType: function (x, defaultValue, allowType) {
-                return _ctx.fn.isType(x, [_ctx.fn.getType(defaultValue)].concat(_ctx.fn.isType(allowType, 'Array') ? allowType :
-                    lib.getType(allowType, 'String') ? [allowType] :
-                        [])) ? x : defaultValue;
+            caseType: function (x, defaultValue, allowType) {
+                return _ctx.fn.isType(x, [_ctx.fn.getType(defaultValue)].concat(Array.isArray(allowType) ? allowType :
+                    typeof allowType === 'string' ? [allowType] : [])) ? x : defaultValue;
             }
         }
     };
@@ -71,23 +73,26 @@
         keys: [ // グローバルでのライブラリのキー
             'librarytemplate'
         ],
-        value: null // ライブラリの値
+        value: { // ライブラリの値
+            foo: 'bar',
+            hoge: 'fuga'
+        }
     };
 
     // エクスポート
     _ctx.libKeys = _lib.keys;
-    if (_ctx.available.moduleExports) module.exports = _lib.value;
+    if (typeof module === 'object' && module.exports !== undefined) _lib.value;
     else _lib.keys.forEach(function (k) {
-        if (k in _root) _ctx.conflict[k] = _root[k];
+        if (k in _root) _ctx.conflicts[k] = _root[k];
         _root[k] = _lib.value;
     });
 
-    // 利用可能な変数を返す
+    // ローカル変数をオブジェクトで返す
     return {
-        _root: _root, // グローバルオブジェクト
-        undefined: undefined, // undefined
-        _main: _main, // ライブラリを読み込む関数
-        _ctx: _ctx, // 環境
-        _lib: _lib // ライブラリ
+        _root: _root,
+        'undefined': undefined,
+        _main: _main,
+        _ctx: _ctx,
+        _lib: _lib
     };
 })(typeof window === 'object' ? window : this);
