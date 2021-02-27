@@ -1,5 +1,5 @@
 /*!
- * LibraryTemplate JavaScript Library v2.1.0
+ * LibraryTemplate JavaScript Library v2.1.1
  * https://github.com/AntimatterX/antimatterx.github.io/blob/main/assets/lib/librarytemplate/librarytemplate.js
  * 
  * Copyright (c) 2021 AntimatterX
@@ -10,7 +10,7 @@
  * This library is declared globally in non-Node.js environments with the following name.
  * librarytemplate
  * 
- * Last Update: 2021-02-27T08:21:03.720Z
+ * Last Update: 2021-02-27T08:27:43.180Z
  */
 (function _main(_root, undefined) {
     'use strict';
@@ -55,7 +55,7 @@
                 }
             },
             /**
-             * デフォルト値の型にキャストする。
+             * デフォルト値の型にキャストします。
              * @param {*?} x キャストする値を渡します。
              * @param {*?} defaultValue デフォルトの値を渡します。
              * @param {string|Array<string>} [allowType=[]] デフォルト値の型以外にも許容する型の型名の文字列または型名の配列を渡します。
