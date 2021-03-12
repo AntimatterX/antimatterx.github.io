@@ -1,5 +1,5 @@
 /*!
- * LibraryTemplate JavaScript Library v1.0.0
+ * MapLike JavaScript Library v1.0.0
  * https://github.com/AntimatterX/antimatterx.github.io/blob/main/assets/lib/MapLike/MapLike.js
  * 
  * Copyright (c) 2021 AntimatterX
