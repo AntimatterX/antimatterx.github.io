@@ -1,5 +1,5 @@
 /*!
- * LibraryTemplate JavaScript Library v2.3.0
+ * LibraryTemplate JavaScript Library v2.3.1
  * https://github.com/AntimatterX/antimatterx.github.io/blob/main/assets/lib/librarytemplate/librarytemplate.js
  * 
  * Copyright (c) 2021 AntimatterX
@@ -12,7 +12,7 @@
  * 
  * Last Update: 2021-03-21T07:59:52.980Z
  */
-var _ = (function _main(_root, undefined) {
+(function _main(_root, undefined) {
     'use strict';
     // 環境
     var _ctx = {
