@@ -151,7 +151,6 @@
 
     // エクスポート
     _ctx.libKey = _ctx.fn.castType(_lib.key, [_lib.key]);
-    console.log(_ctx.libKey);
     if (typeof module === 'object' &&
         typeof module.exports === 'object' && module.exports !== null) module.exports = _lib.val;
     else {
