@@ -1,5 +1,5 @@
 /*!
- * LibraryTemplate JavaScript Library v2.3.1
+ * LibraryTemplate JavaScript Library v2.4.0
  * https://github.com/AntimatterX/antimatterx.github.io/blob/main/assets/lib/librarytemplate/librarytemplate.js
  * 
  * Copyright (c) 2021 AntimatterX
@@ -10,37 +10,34 @@
  * This library is declared globally in non-Node.js environments with the following name.
  * librarytemplate
  * 
- * Last Update: 2021-03-21T07:59:52.980Z
+ * Last Update: 2021-03-27T04:46:56.456Z
  */
 (function _main(_root, undefined) {
     'use strict';
     // 環境
     var _ctx = {
-        libKeys: [],
-        conflicts: {},
+        libKey: [],
+        conflict: {},
         fn: {
             /**
              * グローバルのライブラリのプロパティを読み込み前に戻します。
              * @returns {Object<string, ?*>} 読み込み前のプロパティのリストをオブジェクトで返します。
              * @example
-             * // return value: {}
              * ObjectWithThisMethod.noConflict();
              */
             noConflict: function () {
-                _ctx.libKeys.forEach(function (k) {
-                    if (k in _ctx.conflicts) _root[k] = _ctx.conflicts[k];
-                });
-                return _ctx.conflicts;
+                for (var i = 0; i < _ctx.libKey.length; i++) {
+                    var key = _ctx.libKey[i];
+                    if (key in _ctx.conflict) _root[key] = _ctx.conflict[key];
+                }
+                return _ctx.conflict;
             },
             /**
              * 型名を返します。
              * @param {?*} [x=undefined] 型名を取得する値を渡します。
              * @returns {string} 第一引数に渡した値の型名の文字列を返します。
              * @example
-             * // return value: 'Object'
-             * ObjectWithThisMethod.getType({});
-             * 
-             * // return value: 'Array'
+             * // 'Array'
              * ObjectWithThisMethod.getType([]);
              */
             getType: function (x) {
@@ -49,22 +46,24 @@
             /**
              * 指定した型名か判定します。
              * @param {?*} x 判定する値を渡します。
-             * @param {string|Array<string>} type 型名の文字列または型名の配列を渡します。
+             * @param {string|RegExp|Array<string>} typeName 型名の文字列か、型名にマッチする正規表現か、型名の配列を渡します。
              * @returns {boolean} 第一引数に渡した値の型名が第二引数に渡された型名か判定して真偽値で返します。
              * @example
-             * // return value: true
-             * ObjectWithThisMethod.isType('Hello, Wolrd!', 'String');
-             * 
-             * // return value: false
-             * ObjectWithThisMethod.isType(123, 'String');
+             * // true
+             * ObjectWithThisMethod.isType('Hello, World!', 'String');
+             * ObjectWithThisMethod.isType(document.body, /Element$/);
+             * ObjectWithThisMethod.isType('Hello, World!', [ 'String', 'Number' ]);
+             * ObjectWithThisMethod.isType(12345, [ 'String', 'Number' ]);
              */
-            isType: function (x, type) {
+            isType: function (x, typeName) {
                 var xType = _ctx.fn.getType(x);
-                switch (_ctx.fn.getType(type)) {
+                switch (_ctx.fn.getType(typeName)) {
                     case 'String':
-                        return xType === type;
+                        return xType === typeName;
+                    case 'RegExp':
+                        return typeName.test(xType);
                     case 'Array':
-                        return type.indexOf(xType) > -1;
+                        return typeName.indexOf(xType) > -1;
                     default:
                         return false;
                 }
@@ -73,92 +72,95 @@
              * デフォルト値の型にキャストします。
              * @param {?*} x キャストする値を渡します。
              * @param {?*} defaultValue デフォルトの値を渡します。
-             * @param {string|Array<string>} [allowType=[]] デフォルト値の型以外にも許容する型の型名の文字列または型名の配列を渡します。
+             * @param {string|RegExp|Array<string>} [allowType=[]] デフォルト値の型以外にも許容する
+             *     型の型名の文字列か、型名にマッチする正規表現か、型名の配列を渡します。
              * @returns {?*} デフォルト値の型にキャストされた値を返します。
              * @example
-             * // return value: 0
-             * ObjectWithThisMethod.castType('Hello, World!', 0);
+             * // 12345
+             * ObjectWithThisMethod.castType('Hello, World!', 12345);
              * 
-             * // return value: 'Hello, World!'
-             * ObjectWithThisMethod.castType('Hello, World!', 0, 'String');
+             * // 'Hello, World!'
+             * ObjectWithThisMethod.castType('Hello, World!', 12345, 'String');
              */
             castType: function (x, defaultValue, allowType) {
-                return _ctx.fn.isType(x, [_ctx.fn.getType(defaultValue)].concat(Array.isArray(allowType) ? allowType :
-                    typeof allowType === 'string' ? [allowType] : [])) ? x : defaultValue;
+                return _ctx.fn.isType(x, _ctx.fn.isType(allowType, 'RegExp') ? allowType :
+                    [_ctx.fn.getType(defaultValue)].concat(
+                        _ctx.fn.isType(allowType, 'Array') ? allowType :
+                            typeof allowType === 'string' ? [allowType] :
+                                []
+                    )) ? x : defaultValue;
             },
             /**
              * オブジェクトのプロパティをデフォルト値のオブジェクトのプロパティの型にキャストします。
-             * @param {Object<string, ?*>|Array<?*>} param キャストするオブジェクトを渡します。
-             * @param {Object<string, ?*>|Array<?*>} defaultParam デフォルト値のオブジェクトを渡します。
-             * @param {string|Object<string, string|Array<string>>|Array<string|Array<string>>} [allowTypeList={}] デフォルト値のオブジェクトのプロパティの型以外にも許容する
-             *     型名の文字列または型名の配列とデフォルト値のプロパティ名が組のオブジェクトを渡します。
-             * @returns {Object<string, ?*} デフォルト値の型にキャストされたオブジェクトを返します。
+             * @param {Object<string, ?*>} param キャストするオブジェクトを渡します。
+             * @param {Object<string, ?*>} defaultParam デフォルト値のオブジェクトを渡します。
+             * @param {string|RegExp|Array<string>|Object<string, string|RegExp|Array<string>>} [allowTypeList={}] デフォルト値のオブジェクトのプロパティの型以外にも許容する
+             *     型名の文字列か、型名にマッチする正規表現または型名の配列とデフォルト値のプロパティ名が組のオブジェクトを渡します。
+             * @returns {Object<string. ?*>} デフォルト値の型にキャストされたオブジェクトを返します。
              * @example
-             * // return value: { foo: 0, bar: null, foobar: 'Hello, World!' }
-             * ObjectWithThisMethod.castParam({ foo: undefined, bar: null, foobar: 'Hello, World!' }, { foo: 0, bar: [] }, { foo: 'String', bar: ['Null', 'Object'] });
-             *
-             * // return value: { 0: 123, 1: 'foobar', 2: 2 }
-             * ObjectWithThisMethod.fn.castParam([ 123, 'foobar', null ], [ 0, 1, 2 ], 'String');
+             * // { foo: 12345, bar: 'Hello, World!', foobar: 'foobar' }
+             * ObjectWithThisMethod.castParam({ foo: 12345, bar: 'Hello, World!', foobar: null }, { foo: 0, bar: '', foobar: 'foobar' });
              */
             castParam: function (param, defaultParam, allowTypeList) {
-                param = _ctx.fn.castType(param, {}, 'Array');
-                defaultParam = _ctx.fn.castType(defaultParam, {}, 'Array');
+                param = _ctx.fn.castType(param, {});
+                defaultParam = _ctx.fn.castType(defaultParam, {});
+                var defaultParamKeys = Object.keys(defaultParam);
                 allowTypeList = (function () {
-                    var obj = {};
                     switch (_ctx.fn.getType(allowTypeList)) {
                         case 'String':
-                            Object.keys(defaultParam).forEach(function (k) {
-                                obj[k] = allowTypeList;
-                            });
-                            break;
-                        case 'Object':
-                            obj = allowTypeList;
-                            break;
+                        case 'RegExp':
                         case 'Array':
-                            allowTypeList.forEach(function (v, i) {
-                                obj[i] = v;
-                            });
-                            break;
+                            var obj = {};
+                            for (var i = 0; i < defaultParamKeys.length; i++) obj[defaultParamKeys[i]] = allowTypeList;
+                            return obj;
+                        default:
+                            return allowTypeList;
                     }
-                    return obj;
                 })();
                 var clone = (function () {
-                    var obj = {};
-                    Object.keys(param).forEach(function (k) {
-                        obj[k] = param[k];
-                    });
+                    var obj = {},
+                        propKeys = Object.keys(param);
+                    for (var i = 0; i < propKeys.length; i++)obj[propKeys[i]] = param[propKeys[i]];
                     return obj;
                 })();
-                Object.keys(defaultParam).forEach(function (k) {
-                    clone[k] = !(k in param) ? defaultParam[k] :
+                for (var i = 0; i < defaultParamKeys.length; i++) {
+                    var key = defaultParamKeys[i];
+                    clone[key] = !(key in param) ? defaultParam[key] :
                         _ctx.fn.castType(
-                            param[k], defaultParam[k],
-                            _ctx.fn.castType(allowTypeList[k], [], 'String')
+                            param[key], defaultParam[key],
+                            _ctx.fn.castType(allowTypeList[key], [], ['String', 'RegExp'])
                         );
-                });
+                }
                 return clone;
             }
         }
     };
 
+
     // ライブラリ
     var _lib = {
-        keys: [ // グローバルでのライブラリのキー
-            'librarytemplate'
-        ],
-        value: { // ライブラリの値
-            foo: 'bar',
-            hoge: 'fuga'
+        key: 'librarytemplate', // 文字列か文字列の配列のグローバルでのライブラリのキー
+        val: { // エクスポートされるライブラリの値
+            _root: _root,
+            'undefined': undefined,
+            _main: _main,
+            _ctx: _ctx,
+            _lib: _lib
         }
     };
 
     // エクスポート
-    _ctx.libKeys = _lib.keys;
-    if (typeof module === 'object' && module.exports !== undefined) module.exports = _lib.value;
-    else _lib.keys.forEach(function (k) {
-        if (k in _root) _ctx.conflicts[k] = _root[k];
-        _root[k] = _lib.value;
-    });
+    _ctx.libKey = _ctx.fn.castType(_lib.key, [_lib.key]);
+    console.log(_ctx.libKey);
+    if (typeof module === 'object' &&
+        typeof module.exports === 'object' && module.exports !== null) module.exports = _lib.val;
+    else {
+        for (var i = 0; i < _ctx.libKey.length; i++) {
+            var k = _ctx.libKey[i];
+            if (k in _root) _ctx.conflict[k] = _root[k];
+            _root[k] = _lib.val;
+        }
+    }
 
     // ローカル変数をオブジェクトで返す
     return {
