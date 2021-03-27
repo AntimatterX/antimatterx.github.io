@@ -1,5 +1,5 @@
 /*!
- * LibraryTemplate JavaScript Library v2.4.0
+ * LibraryTemplate JavaScript Library v2.4.1
  * https://github.com/AntimatterX/antimatterx.github.io/blob/main/assets/lib/librarytemplate/librarytemplate.js
  * 
  * Copyright (c) 2021 AntimatterX
@@ -10,7 +10,7 @@
  * This library is declared globally in non-Node.js environments with the following name.
  * librarytemplate
  * 
- * Last Update: 2021-03-27T04:46:56.456Z
+ * Last Update: 2021-03-27T05:47:44.976Z
  */
 (function _main(_root, undefined) {
     'use strict';
@@ -114,7 +114,7 @@
                             for (var i = 0; i < defaultParamKeys.length; i++) obj[defaultParamKeys[i]] = allowTypeList;
                             return obj;
                         default:
-                            return allowTypeList;
+                            return _ctx.fn.castType(allowTypeList, {});
                     }
                 })();
                 var clone = (function () {
