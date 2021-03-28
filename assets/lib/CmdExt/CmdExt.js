@@ -1,5 +1,5 @@
 /*!
- * CmdExt JavaScript Library v2.0.1
+ * CmdExt JavaScript Library v2.0.2
  * https://github.com/AntimatterX/antimatterx.github.io/blob/main/assets/lib/CmdExt/CmdExt.js
  * 
  * Copyright (c) 2021 AntimatterX
@@ -10,7 +10,7 @@
  * This library is declared globally in non-Node.js environments with the following name.
  * CmdExt
  * 
- * Last Update: 2021-03-28T11:23:45.139Z
+ * Last Update: 2021-03-28T11:32:53.192Z
  */
 (function _main(_root, undefined) {
     'use strict';
@@ -492,7 +492,7 @@
                         ((command === undefined && this._handlers.commandnotfound.length < 1) ||
                             (!command.enabled && this._handlers.disabledcommand.length < 1))) throw err;
                     else this._trigger(command === undefined ? 'commandnotfound' : 'disabledcommand', context);
-                }
+                } else command.callback.apply(null, context, parsed.args);
                 return this;
             };
             /**
