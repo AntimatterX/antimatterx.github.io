@@ -223,6 +223,7 @@
                 });
             };
 
+            CmdExt.prototype.version = CmdExt.version = '2.0.2';
             CmdExt.prototype.errors = CmdExt.errors = (function () {
                 var errors = {};
                 errors.CommandError = (function () {
